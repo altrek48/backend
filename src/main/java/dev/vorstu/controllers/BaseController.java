@@ -8,9 +8,11 @@ import dev.vorstu.dto.Student;
 import dev.vorstu.repositories.StudentRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.awt.*;
 import java.util.Date;
 import java.util.ArrayList;
@@ -86,7 +88,22 @@ public class BaseController {
     }
 
     @GetMapping("students")
-    public List<Student> getAllStudents() {
-        return (List<Student>) studentRepository.findAll();
+    public Page<Student> getAllStudents(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return studentRepository.findAll(pageable);
     }
+
+    @GetMapping(value = "students/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Page<Student> searchStudents(
+            @RequestParam("filter") String filter,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "5") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        return studentRepository.findByFilter(filter, pageable);
+    }
+
 }
