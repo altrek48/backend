@@ -1,8 +1,7 @@
 package dev.vorstu.controllers;
 
-import dev.vorstu.Services.StudentService;
-import dev.vorstu.dto.Student;
-import dev.vorstu.repositories.StudentRepository;
+import dev.vorstu.services.StudentService;
+import dev.vorstu.entities.StudentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,7 @@ public class StudentController {
     StudentService studentService;
 
     @PutMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Student changestudent(@RequestBody Student changingstudent) {
+    public StudentEntity changestudent(@RequestBody StudentEntity changingstudent) {
         return studentService.updateStudent(changingstudent);
     }
 
@@ -27,13 +26,13 @@ public class StudentController {
     }
 
     @PostMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Student createStudent(@RequestBody Student newStudent) {
+    public StudentEntity createStudent(@RequestBody StudentEntity newStudent) {
         return studentService.saveStudent(newStudent);
     }
 
 
     @GetMapping("students")
-    public Page<Student> getAllStudents(
+    public Page<StudentEntity> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size
     ) {
@@ -41,7 +40,7 @@ public class StudentController {
     }
 
     @GetMapping(value = "students/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Student> searchStudents(
+    public Page<StudentEntity> searchStudents(
             @RequestParam("filter") String filter,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size) {

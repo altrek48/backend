@@ -1,6 +1,6 @@
-package dev.vorstu.Services;
+package dev.vorstu.services;
 
-import dev.vorstu.dto.Student;
+import dev.vorstu.entities.StudentEntity;
 import dev.vorstu.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,12 +14,12 @@ public class StudentService {
     @Autowired
     StudentRepository studentRepository;
 
-    public Student updateStudent(Student student) {
+    public StudentEntity updateStudent(StudentEntity student) {
         if(student.getId() == null) {
             throw new RuntimeException("id of changing student can not be null");
         }
 
-        Student changingStudent = studentRepository.findById(student.getId())
+        StudentEntity changingStudent = studentRepository.findById(student.getId())
                 .orElseThrow(() -> new RuntimeException("student with id: " + student.getId() + "was not found" ));
         changingStudent.setName(student.getName());
         changingStudent.setSurname(student.getSurname());
@@ -29,7 +29,7 @@ public class StudentService {
         return studentRepository.save(changingStudent);
     }
 
-    public Page<Student> findAll(int page, int size) {
+    public Page<StudentEntity> findAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return studentRepository.findAll(pageable);
     }
@@ -39,11 +39,11 @@ public class StudentService {
         return id;
     }
 
-    public Student saveStudent(Student newStudent) {
+    public StudentEntity saveStudent(StudentEntity newStudent) {
         return studentRepository.save(newStudent);
     }
 
-    public Page<Student> findByFilter(String filter, int page, int size) {
+    public Page<StudentEntity> findByFilter(String filter, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return studentRepository.findByFilter(filter, pageable);
     }
