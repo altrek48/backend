@@ -1,27 +1,19 @@
-///////////////Student controller
-
-/////сделеть сверху фильтер для поиска по всем полям
-
 package dev.vorstu.controllers;
 
 import dev.vorstu.dto.Student;
 import dev.vorstu.repositories.StudentRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.awt.*;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("api/base")
-public class BaseController {
+public class StudentController {
 
     @Autowired
     private StudentRepository studentRepository;
@@ -54,38 +46,15 @@ public class BaseController {
 
     @DeleteMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Long deleteStudent(@PathVariable("id") Long id) {
-        return removeStudent(id);
-    }
-    ////////////////////////////////////   соединить в одну(укоротить)
-    private Long removeStudent(Long id) {
-        if (!studentRepository.existsById(id)) {
-            throw new RuntimeException("Student with id: " + id + " was not found");
-        }
         studentRepository.deleteById(id);
         return id;
     }
 
-
-
-
-
     @PostMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Student createStudent(@RequestBody Student newStudent) {return addStudent(newStudent);}
-    ////////////////////////////////////   соединить в одну(укоротить)
-    private Student addStudent(Student student) {
-        return studentRepository.save(student);
+    public Student createStudent(@RequestBody Student newStudent) {
+        return studentRepository.save(newStudent);
     }
 
-    @GetMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Student getStudentById(@PathVariable("id") Long id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("student with id: " + id + " was not found"));
-    }
-////////////////////////////////////   соединить в одну(укоротить)
-    @GetMapping(value = "students/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Student> getStudentByGroup(@RequestParam(value = "group") String group) {
-        return studentRepository.findByGroup(group);
-    }
 
     @GetMapping("students")
     public Page<Student> getAllStudents(
