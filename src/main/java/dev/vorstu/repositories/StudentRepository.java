@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
+
     @Query("from Student")
     Page<Student> findAllByPageRequest(Pageable pageable);
 
