@@ -2,6 +2,7 @@ package dev.vorstu.controllers;
 
 import dev.vorstu.dto.StudentCreateDto;
 import dev.vorstu.dto.StudentDto;
+import dev.vorstu.dto.StudentUpdateDto;
 import dev.vorstu.services.StudentService;
 import dev.vorstu.entities.StudentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,9 @@ public class StudentController {
     @Autowired
     StudentService studentService;
 
-    @PutMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StudentEntity changeStudent(@RequestBody StudentEntity changingStudent) {
-        return studentService.updateStudent(changingStudent);
+    @PutMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public StudentDto changeStudent(@RequestBody StudentUpdateDto changingStudent, @PathVariable Long id) {
+        return studentService.updateStudent(changingStudent, id);
     }
 
 
