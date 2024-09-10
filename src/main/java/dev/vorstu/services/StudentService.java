@@ -1,5 +1,7 @@
 package dev.vorstu.services;
 
+import dev.vorstu.dto.StudentCreateDto;
+import dev.vorstu.dto.StudentDto;
 import dev.vorstu.entities.StudentEntity;
 import dev.vorstu.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +41,38 @@ public class StudentService {
         return id;
     }
 
-    public StudentEntity saveStudent(StudentEntity newStudent) {
-        return studentRepository.save(newStudent);
+    public StudentDto saveStudent(StudentCreateDto newStudent) {
+        var student = toStudentEntity(newStudent);
+        studentRepository.save(student);
+        var studentDto = toStudentDto(student);
+        return studentDto;
     }
 
     public Page<StudentEntity> findByFilter(String filter, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return studentRepository.findByFilter(filter, pageable);
     }
+
+    private StudentEntity toStudentEntity(StudentCreateDto studentCreateDto) {
+        var studentEntity  = new StudentEntity();
+        studentEntity.setDebt(studentCreateDto.getDebt());
+        studentEntity.setSurname(studentCreateDto.getSurname());
+        studentEntity.setName(studentCreateDto.getName());
+        studentEntity.setComents(studentCreateDto.getComents());
+        studentEntity.setGroup(studentCreateDto.getGroup());
+        return studentEntity;
+    }
+
+    private StudentDto toStudentDto(StudentEntity studentEntity) {
+        var studentDto = new StudentDto();
+        studentDto.setId(studentEntity.getId());
+        studentDto.setName(studentEntity.getName());
+        studentDto.setSurname(studentEntity.getSurname());
+        studentDto.setGroup(studentEntity.getGroup());
+        studentDto.setDebt(studentEntity.getDebt());
+        studentDto.setComents(studentEntity.getComents());
+        return  studentDto;
+    }
+
 
 }

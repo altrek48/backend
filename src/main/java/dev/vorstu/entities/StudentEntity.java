@@ -31,11 +31,16 @@ public class StudentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "name")
     private String name;
+    @Column(name = "surname")
     private String surname;
     @Column(name = "group_of_students")
     private String group;
+    @Column(name = "debt")
     private String debt;
+    @Column(name = "coments")
     private String coments;
 }
