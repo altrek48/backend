@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +20,20 @@ public class StudentService {
     StudentRepository studentRepository;
 
     public StudentDto updateStudent(StudentUpdateDto studentData, Long id) {
-        var student = studentRepository.findById(id)
+        StudentEntity student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
         toStudentEntity(studentData, student);
         studentRepository.save(student);
-        var studentDto = toStudentDto(student);
+        StudentDto studentDto = toStudentDto(student);
         return  studentDto;
     }
 
-    public Page<StudentEntity> findAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return studentRepository.findAll(pageable);
+    public Page<StudentDto> findAll(int page, int size, String sortField, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<StudentEntity> studentEntities = studentRepository.findAll(pageable);
+        Page<StudentDto> studentDtos = studentEntities.map(this::toStudentDto);
+        return  studentDtos;
     }
 
     public Long deleteStudentById(Long id) {
@@ -38,15 +42,18 @@ public class StudentService {
     }
 
     public StudentDto saveStudent(StudentCreateDto newStudent) {
-        var student = toStudentEntity(newStudent);
+        StudentEntity student = toStudentEntity(newStudent);
         studentRepository.save(student);
-        var studentDto = toStudentDto(student);
+        StudentDto studentDto = toStudentDto(student);
         return studentDto;
     }
 
-    public Page<StudentEntity> findByFilter(String filter, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return studentRepository.findByFilter(filter, pageable);
+    public  Page<StudentDto> findByFilter(String filter, int page, int size, String sortField, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<StudentEntity> studentEntities = studentRepository.findByFilter(filter, pageable);
+        Page<StudentDto> studentDtos = studentEntities.map(this::toStudentDto);
+        return studentDtos;
     }
 
     private StudentEntity toStudentEntity(StudentCreateDto studentCreateDto) {

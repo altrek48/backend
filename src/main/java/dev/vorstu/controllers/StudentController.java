@@ -35,19 +35,24 @@ public class StudentController {
 
 
     @GetMapping("students")
-    public Page<StudentEntity> getAllStudents(
+    public Page<StudentDto> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        return studentService.findAll(page, size);
+        return studentService.findAll(page, size, sortField, sortDirection);
     }
 
     @GetMapping(value = "students/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<StudentEntity> searchStudents(
+    public Page<StudentDto> searchStudents(
             @RequestParam("filter") String filter,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "5") int size) {
-        return studentService.findByFilter(filter,page,size);
+            @RequestParam(value = "size", defaultValue = "5") int size,
+            @RequestParam(value = "sortField", defaultValue = "id") String sortField,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection)
+    {
+        return studentService.findByFilter(filter,page,size, sortField, sortDirection);
     }
 
 

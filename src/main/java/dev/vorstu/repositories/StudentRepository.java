@@ -20,6 +20,4 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
     Page<StudentEntity> findByFilter(@Param("filter") String filter, Pageable pageable);
 
 
-
-
 }
