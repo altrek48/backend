@@ -43,4 +43,6 @@ public class StudentEntity {
     private String debt;
     @Column(name = "coments")
     private String coments;
+    @Column(name = "user_id")
+    private Long userId;
 }
