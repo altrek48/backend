@@ -1,6 +1,7 @@
 package dev.vorstu.controllers;
 
-import dev.vorstu.entities.User;
+import dev.vorstu.dto.UserShow;
+import dev.vorstu.entities.UserEntity;
 import dev.vorstu.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -23,25 +23,24 @@ public class AuthorizationController {
     @Autowired
     UserService userService;
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "login")
     public void apiLogin(Principal user) {
         log.info("Login user");
         UsernamePasswordAuthenticationToken token = ((UsernamePasswordAuthenticationToken) user);
         log.info("Hello {} with role {}", token.getName(), token.getAuthorities());
     }
 
-    @PostMapping(value = "/registration", consumes = "application/json")
-    public String addUser(@RequestBody User userForm, Model model) {
-        if(userService.checkAvailableUsername(userForm.getUsername())) {
-            model.addAttribute("UsernameError", "Пользователь с таким именем уже существует");
-            return "registration";
+    @PostMapping(value = "registration", consumes = "application/json")
+    public UserShow addUser(@RequestBody UserShow userShow) {
+        if (!userService.checkAvailableUsername(userShow.getUsername())) {
+            return userService.saveUser(userShow);
+        } else {
+            throw new IllegalArgumentException("Username is already taken");
         }
-        userService.saveUser(userForm);
-        return "redirect:/";
     }
 
 
-    @PostMapping(path = "/logout", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "logout", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public Principal logout(Principal user, HttpServletRequest request, HttpServletResponse response) {
         CookieClearingLogoutHandler cookieClearingLogoutHandler = new CookieClearingLogoutHandler(

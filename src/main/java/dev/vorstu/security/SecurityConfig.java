@@ -25,20 +25,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
-                        //для незарегестрированных пользователей
-                        .requestMatchers("/api/registration").not().fullyAuthenticated()
-
-                        //для всех пользователей
-                        .requestMatchers("/api/login/**").permitAll()
-
-                        //для ролей: студент, админ
-                        .requestMatchers("/api/base/students").hasAnyAuthority("STUDENT", "ADMIN")
-
-                        //только для админов
-                        .requestMatchers("/api/base/students/**").hasAuthority("ADMIN")
+//                        //для незарегестрированных пользователей
+//                        .requestMatchers("/api/registration").not().fullyAuthenticated()
+//
+//                        //для всех пользователей
+//                        .requestMatchers("/api/login/**").permitAll()
+//
+//                        //для ролей: студент, админ
+//                        .requestMatchers("/api/base/students").hasAnyAuthority("STUDENT", "ADMIN")
+//
+//                        //только для админов
+//                        .requestMatchers("/api/base/students/**").hasAuthority("ADMIN")
 
                         //на все остальные запросы только для аутенфицированных пользователей
-                        .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
+
+
+
+                //ПОТОМ УДАЛИТЬ
+                                .anyRequest().hasAnyAuthority("STUDENT", "ADMIN")
                 )
                 .httpBasic(basic -> basic
                         .authenticationEntryPoint(new AuthenticationEntryPoint() {

@@ -1,10 +1,7 @@
 package dev.vorstu.controllers;
 
-import dev.vorstu.dto.StudentCreateDto;
-import dev.vorstu.dto.StudentDto;
-import dev.vorstu.dto.StudentUpdateDto;
+import dev.vorstu.dto.StudentShow;
 import dev.vorstu.services.StudentService;
-import dev.vorstu.entities.StudentEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +15,7 @@ public class StudentController {
     StudentService studentService;
 
     @PutMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StudentDto changeStudent(@RequestBody StudentUpdateDto changingStudent, @PathVariable Long id) {
+    public StudentShow changeStudent(@RequestBody StudentShow changingStudent, @PathVariable Long id) {
         return studentService.updateStudent(changingStudent, id);
     }
 
@@ -29,13 +26,13 @@ public class StudentController {
     }
 
     @PostMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StudentDto createStudent(@RequestBody StudentCreateDto newStudent) {
+    public StudentShow createStudent(@RequestBody StudentShow newStudent) {
         return studentService.saveStudent(newStudent);
     }
 
 
     @GetMapping("students")
-    public Page<StudentDto> getAllStudents(
+    public Page<StudentShow> getAllStudents(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortField,
@@ -45,7 +42,7 @@ public class StudentController {
     }
 
     @GetMapping(value = "students/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<StudentDto> searchStudents(
+    public Page<StudentShow> searchStudents(
             @RequestParam("filter") String filter,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "5") int size,

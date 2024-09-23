@@ -10,10 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Table(name = "passwords")
 @Getter @Setter
 public class Password {
+
     static BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public Password(String password) { this.password = passwordEncoder.encode(password); }
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

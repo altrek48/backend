@@ -1,8 +1,6 @@
 package dev.vorstu.services;
 
-import dev.vorstu.dto.StudentCreateDto;
-import dev.vorstu.dto.StudentDto;
-import dev.vorstu.dto.StudentUpdateDto;
+import dev.vorstu.dto.StudentShow;
 import dev.vorstu.entities.StudentEntity;
 import dev.vorstu.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +17,20 @@ public class StudentService {
     @Autowired
     StudentRepository studentRepository;
 
-    public StudentDto updateStudent(StudentUpdateDto studentData, Long id) {
+    public StudentShow updateStudent(StudentShow studentData, Long id) {
         StudentEntity student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
         toStudentEntity(studentData, student);
         studentRepository.save(student);
-        StudentDto studentDto = toStudentDto(student);
-        return  studentDto;
+        StudentShow studentShow = toStudentDto(student);
+        return studentShow;
     }
 
-    public Page<StudentDto> findAll(int page, int size, String sortField, String sortDirection) {
+    public Page<StudentShow> findAll(int page, int size, String sortField, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<StudentEntity> studentEntities = studentRepository.findAll(pageable);
-        Page<StudentDto> studentDtos = studentEntities.map(this::toStudentDto);
+        Page<StudentShow> studentDtos = studentEntities.map(this::toStudentDto);
         return  studentDtos;
     }
 
@@ -41,22 +39,22 @@ public class StudentService {
         return id;
     }
 
-    public StudentDto saveStudent(StudentCreateDto newStudent) {
+    public StudentShow saveStudent(StudentShow newStudent) {
         StudentEntity student = toStudentEntity(newStudent);
         studentRepository.save(student);
-        StudentDto studentDto = toStudentDto(student);
-        return studentDto;
+        StudentShow studentShow = toStudentDto(student);
+        return studentShow;
     }
 
-    public  Page<StudentDto> findByFilter(String filter, int page, int size, String sortField, String sortDirection) {
+    public  Page<StudentShow> findByFilter(String filter, int page, int size, String sortField, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<StudentEntity> studentEntities = studentRepository.findByFilter(filter, pageable);
-        Page<StudentDto> studentDtos = studentEntities.map(this::toStudentDto);
+        Page<StudentShow> studentDtos = studentEntities.map(this::toStudentDto);
         return studentDtos;
     }
 
-    private StudentEntity toStudentEntity(StudentCreateDto studentCreateDto) {
+    private StudentEntity toStudentEntity(StudentShow studentCreateDto) {
         var studentEntity  = new StudentEntity();
         studentEntity.setDebt(studentCreateDto.getDebt());
         studentEntity.setSurname(studentCreateDto.getSurname());
@@ -66,7 +64,7 @@ public class StudentService {
         return studentEntity;
     }
 
-    private StudentEntity toStudentEntity(StudentUpdateDto studentUpdateDto, StudentEntity studentEntity) {
+    private StudentEntity toStudentEntity(StudentShow studentUpdateDto, StudentEntity studentEntity) {
         studentEntity.setDebt(studentUpdateDto.getDebt());
         studentEntity.setSurname(studentUpdateDto.getSurname());
         studentEntity.setName(studentUpdateDto.getName());
@@ -75,8 +73,8 @@ public class StudentService {
         return studentEntity;
     }
 
-    private StudentDto toStudentDto(StudentEntity studentEntity) {
-        var studentDto = new StudentDto();
+    private StudentShow toStudentDto(StudentEntity studentEntity) {
+        var studentDto = new StudentShow();
         studentDto.setId(studentEntity.getId());
         studentDto.setName(studentEntity.getName());
         studentDto.setSurname(studentEntity.getSurname());

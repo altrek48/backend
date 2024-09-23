@@ -3,7 +3,7 @@ package dev.vorstu;
 import dev.vorstu.entities.Password;
 import dev.vorstu.entities.Role;
 import dev.vorstu.entities.StudentEntity;
-import dev.vorstu.entities.User;
+import dev.vorstu.entities.UserEntity;
 import dev.vorstu.repositories.StudentRepository;
 import dev.vorstu.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class Initializer {
 
     public void initial() {
 
-        User student = new User(
+        UserEntity student = new UserEntity(
                 null,
                 "student",
                 Role.STUDENT,
@@ -28,7 +28,7 @@ public class Initializer {
                 true
         );
 
-        User studentAdmin = new User(
+        UserEntity studentAdmin = new UserEntity(
                 null,
                 "studentAdmin",
                 Role.ADMIN,

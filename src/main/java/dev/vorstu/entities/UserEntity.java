@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,4 +27,6 @@ public class User {
     private Password password;
 
     private boolean enable;
+
+
 }
