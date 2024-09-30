@@ -17,10 +17,9 @@ public class UserService {
     UserMapper userMapper;
 
     public UserShow saveUser(UserShow userShow) {
-        UserEntity userEntity = userMapper.toUserEntity(userShow);
-        userRepository.save(userEntity);
-        UserShow newUserShow = userMapper.toUserShow(userEntity);
-        return  newUserShow;
+        return userMapper.toUserShow(
+                userRepository.save(userMapper.toUserEntity(userShow))
+        );
     }
 
     public boolean checkAvailableUsername(String username) {

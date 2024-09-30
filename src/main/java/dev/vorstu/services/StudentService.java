@@ -2,6 +2,7 @@ package dev.vorstu.services;
 
 import dev.vorstu.dto.StudentShow;
 import dev.vorstu.entities.StudentEntity;
+import dev.vorstu.mappers.StudentMapper;
 import dev.vorstu.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,15 +18,19 @@ public class StudentService {
     @Autowired
     StudentRepository studentRepository;
 
+    @Autowired
+    StudentMapper studentMapper;
+
     public StudentShow updateStudent(StudentShow studentData, Long id) {
+        //todo
         StudentEntity student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found"));
-        toStudentEntity(studentData, student);
-        studentRepository.save(student);
-        StudentShow studentShow = toStudentDto(student);
+        studentRepository.save(studentMapper.toStudentEntityExceptId(student, studentData));
+        StudentShow studentShow = studentMapper.toStudentShow(student);
         return studentShow;
     }
 
+    //todo sort сделай раньше
     public Page<StudentShow> findAll(int page, int size, String sortField, String sortDirection) {
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -40,9 +45,9 @@ public class StudentService {
     }
 
     public StudentShow saveStudent(StudentShow newStudent) {
-        StudentEntity student = toStudentEntity(newStudent);
+        StudentEntity student = studentMapper.toStudentEntity(newStudent);
         studentRepository.save(student);
-        StudentShow studentShow = toStudentDto(student);
+        StudentShow studentShow = studentMapper.toStudentShow(student);
         return studentShow;
     }
 
@@ -54,6 +59,7 @@ public class StudentService {
         return studentDtos;
     }
 
+    //todo убрать
     private StudentEntity toStudentEntity(StudentShow studentCreateDto) {
         var studentEntity  = new StudentEntity();
         studentEntity.setDebt(studentCreateDto.getDebt());

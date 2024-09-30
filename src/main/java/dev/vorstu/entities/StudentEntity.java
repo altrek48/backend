@@ -44,6 +44,6 @@ public class StudentEntity {
 
     private String coments;
 
-    @Column(name = "user_id")
-    private Long userId;
+//    @Column(name = "user_id")
+//    private Long userId;
 }
