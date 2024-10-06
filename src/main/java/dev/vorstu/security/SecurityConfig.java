@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -26,33 +27,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize
-                        //для незарегестрированных пользователей
-                        .requestMatchers("/api/registration").not().fullyAuthenticated()
-
-                        //для всех пользователей
+        http
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/registration").permitAll()
                         .requestMatchers("/api/login/**").permitAll()
-
-                        //для ролей: студент, админ
                         .requestMatchers("/api/base/students").hasAnyAuthority("STUDENT", "ADMIN")
-
-                        //только для админов
                         .requestMatchers("/api/base/students/**").hasAuthority("ADMIN")
-
-                        //на все остальные запросы только для аутенфицированных пользователей
                         .anyRequest().authenticated()
-
-
-
                 )
                 .httpBasic(basic -> basic
-                        .authenticationEntryPoint(new AuthenticationEntryPoint() {
-                            @Override
-                            public void commence(HttpServletRequest request, HttpServletResponse response,
-                                                 AuthenticationException authException) {
-                                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                            }
-                        })
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.setStatus(HttpStatus.UNAUTHORIZED.value()))
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) 
                 )
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable());
@@ -64,7 +52,7 @@ public class SecurityConfig {
     private DataSource dataSource;
 
     @Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception{
+    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication().dataSource(dataSource)
                 .passwordEncoder(new BCryptPasswordEncoder())
                 .usersByUsernameQuery(
@@ -73,7 +61,5 @@ public class SecurityConfig {
                                 + "inner join passwords as p on u.password_id = p.id "
                                 + "where username=?")
                 .authoritiesByUsernameQuery("select username, role from users where username=?");
-
     }
-
 }
