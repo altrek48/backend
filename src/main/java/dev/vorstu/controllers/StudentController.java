@@ -3,6 +3,9 @@ package dev.vorstu.controllers;
 import dev.vorstu.dto.StudentShow;
 import dev.vorstu.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
@@ -38,7 +41,9 @@ public class StudentController {
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        return studentService.findAll(page, size, sortField, sortDirection);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return studentService.findAll(pageable);
     }
 
     @GetMapping(value = "students/search", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,7 +54,9 @@ public class StudentController {
             @RequestParam(value = "sortField", defaultValue = "id") String sortField,
             @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection)
     {
-        return studentService.findByFilter(filter,page,size, sortField, sortDirection);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return studentService.findByFilter(filter, pageable);
     }
 
 

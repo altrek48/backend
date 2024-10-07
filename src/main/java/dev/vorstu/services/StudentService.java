@@ -30,10 +30,7 @@ public class StudentService {
         return studentShow;
     }
 
-    //todo sort сделай раньше
-    public Page<StudentShow> findAll(int page, int size, String sortField, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<StudentShow> findAll(Pageable pageable) {
         Page<StudentEntity> studentEntities = studentRepository.findAll(pageable);
         Page<StudentShow> studentDtos = studentEntities.map(this::toStudentDto);
         return  studentDtos;
@@ -51,36 +48,15 @@ public class StudentService {
         return studentShow;
     }
 
-    public  Page<StudentShow> findByFilter(String filter, int page, int size, String sortField, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public  Page<StudentShow> findByFilter(String filter, Pageable pageable) {
         Page<StudentEntity> studentEntities = studentRepository.findByFilter(filter, pageable);
         Page<StudentShow> studentDtos = studentEntities.map(this::toStudentDto);
         return studentDtos;
     }
 
-    //todo убрать
-    private StudentEntity toStudentEntity(StudentShow studentCreateDto) {
-        var studentEntity  = new StudentEntity();
-        studentEntity.setDebt(studentCreateDto.getDebt());
-        studentEntity.setSurname(studentCreateDto.getSurname());
-        studentEntity.setName(studentCreateDto.getName());
-        studentEntity.setComents(studentCreateDto.getComents());
-        studentEntity.setGroup(studentCreateDto.getGroup());
-        return studentEntity;
-    }
-
-    private StudentEntity toStudentEntity(StudentShow studentUpdateDto, StudentEntity studentEntity) {
-        studentEntity.setDebt(studentUpdateDto.getDebt());
-        studentEntity.setSurname(studentUpdateDto.getSurname());
-        studentEntity.setName(studentUpdateDto.getName());
-        studentEntity.setComents(studentUpdateDto.getComents());
-        studentEntity.setGroup(studentUpdateDto.getGroup());
-        return studentEntity;
-    }
-
+    //Нету смысла убирать, так как в маппере все равно придется описывать функционал работы с Page<>
     private StudentShow toStudentDto(StudentEntity studentEntity) {
-        var studentDto = new StudentShow();
+        StudentShow studentDto = new StudentShow();
         studentDto.setId(studentEntity.getId());
         studentDto.setName(studentEntity.getName());
         studentDto.setSurname(studentEntity.getSurname());
