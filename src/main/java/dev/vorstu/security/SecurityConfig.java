@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/registration").permitAll()
                         .requestMatchers("/api/login/**").permitAll()
                         .requestMatchers("/api/base/students").hasAnyAuthority("STUDENT", "ADMIN")
-                        .requestMatchers("/api/base/students/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/base/students/**").hasAnyAuthority("STUDENT", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(basic -> basic
@@ -56,10 +56,15 @@ public class SecurityConfig {
         auth.jdbcAuthentication().dataSource(dataSource)
                 .passwordEncoder(new BCryptPasswordEncoder())
                 .usersByUsernameQuery(
-                        "select username, p.password as password, enable "
+                        "select u.username, p.password as password, u.enable "
                                 + "from users as u "
                                 + "inner join passwords as p on u.password_id = p.id "
-                                + "where username=?")
-                .authoritiesByUsernameQuery("select username, role from users where username=?");
+                                + "left join students s on u.id = s.user_id "
+                                + "where u.username=?")
+                .authoritiesByUsernameQuery(
+                        "select u.username, u.role "
+                                + "from users as u "
+                                + "left join students s on u.id = s.user_id "
+                                + "where u.username=?");
     }
 }

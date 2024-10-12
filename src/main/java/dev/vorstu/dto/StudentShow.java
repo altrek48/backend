@@ -28,4 +28,6 @@ public class StudentShow {
 
     @JsonProperty("coments")
     private String coments;
+
+    private Long user_id;
 }

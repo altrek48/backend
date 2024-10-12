@@ -19,5 +19,7 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
             "LOWER(s.group) LIKE LOWER(CONCAT('%', :filter, '%'))")
     Page<StudentEntity> findByFilter(@Param("filter") String filter, Pageable pageable);
 
+    @Query("SELECT s FROM StudentEntity s WHERE s.user.id = :userId")
+    Page<StudentEntity> findAllToUser(Pageable pageable, @Param("userId") Long userId);
 
 }

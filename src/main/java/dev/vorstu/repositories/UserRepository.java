@@ -11,4 +11,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             "FROM UserEntity u WHERE LOWER(u.username) = LOWER(:username)")
     Boolean checkAvailableUsername(@Param("username") String username);
 
+    UserEntity findByUsername(String username);
+
 }

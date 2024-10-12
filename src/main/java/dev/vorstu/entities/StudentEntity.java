@@ -1,32 +1,24 @@
 package dev.vorstu.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "students")
 @Getter
 @Setter
-@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class StudentEntity {
 
-    public StudentEntity() {
-
-    };
-
-    public StudentEntity(Long id, String name, String group, String surname, String debt, String coments) {
-        this(name, surname, group, debt, coments);
-        this.id = id;
-    }
-
-    public StudentEntity(String name, String surname, String group, String debt, String coments) {
+    public StudentEntity(String name, String surname, String group, String debt, String coments, UserEntity user) {
+        this.user = user;
         this.name = name;
         this.surname = surname;
         this.group = group;
         this.debt = debt;
         this.coments = coments;
+
     }
 
     @Id
@@ -44,6 +36,7 @@ public class StudentEntity {
 
     private String coments;
 
-//    @Column(name = "user_id")
-//    private Long userId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 }

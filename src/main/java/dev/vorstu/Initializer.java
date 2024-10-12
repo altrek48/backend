@@ -6,8 +6,10 @@ import dev.vorstu.entities.StudentEntity;
 import dev.vorstu.entities.UserEntity;
 import dev.vorstu.repositories.StudentRepository;
 import dev.vorstu.repositories.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class Initializer {
@@ -20,28 +22,25 @@ public class Initializer {
 
     public void initial() {
 
-        UserEntity student = new UserEntity(
+        UserEntity student = userRepository.save(new UserEntity(
                 null,
                 "student",
                 Role.STUDENT,
                 new Password("1234"),
                 true
-        );
+        ));
 
-        UserEntity studentAdmin = new UserEntity(
+        UserEntity studentAdmin = userRepository.save(new UserEntity(
                 null,
                 "studentAdmin",
                 Role.ADMIN,
                 new Password("12345"),
                 true
-        );
+        ));
 
-        userRepository.save(student);
-        userRepository.save(studentAdmin);
-
-        studentRepository.save(new StudentEntity("Andry", "Amirov", "VM", "durak", "alalalala"));
-        studentRepository.save(new StudentEntity("Denis", "Ignatov", "AM", "debil", "ululululu"));
-        studentRepository.save(new StudentEntity("Vova", "Redisov", "IM", "lox", "elelelele"));
+        studentRepository.save(new StudentEntity("Andry", "Amirov", "VM", "durak", "alalalala", studentAdmin));
+        studentRepository.save(new StudentEntity("Denis", "Ignatov", "AM", "debil", "ululululu",student));
+        studentRepository.save(new StudentEntity("Vova", "Redisov", "IM", "lox", "elelelele", student));
     }
 
 }
